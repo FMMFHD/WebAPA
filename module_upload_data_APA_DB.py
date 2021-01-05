@@ -33,18 +33,24 @@ def init_formData_APA(rede, estacao, ano):
     return form_data
 
 
-def upload_data(year):
+def upload_data(year, verify=False):
     """
         To upload the data to the database, it follows the following steps:
             - open excel estacao to retrieve feature of each station
             - get excel from APA site
             - copy the information to the database
     """
+    if not year.isnumeric():
+        return """Error: Wrong Input value."""
     msg = check_table_specific(year)
-    if msg is None:
+
+    if msg is None and not verify:
         msg = save_APA_Data(year)
         
         return msg
+    elif msg is None and verify:
+        msg = """The database does't have information from the year {0}.""".format(year)
+
     return msg
 
 
@@ -259,5 +265,4 @@ def save_to_database(tableName, dataframe, fileName, information):
         information['str_estacoes'] += '{}'.format(Id_estacao) + ', '
 
     return sql
-    
     

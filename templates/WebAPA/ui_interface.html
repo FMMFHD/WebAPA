@@ -35,13 +35,31 @@
 {% endblock %}
 
 {% block body_outer %}
-    <h1>Update APA DATA</h1>
-    <h2>Select a year</h2>
+    <h1>Menu of the WebAPA UI</h1>
     <div>
-        <input type="number" name="year" id="year">
-        <input id="Button" type="button" value="Enter">
-        <br>
-        <div id="Response"></div>
+
+        <table>
+            <tr>
+                <td>
+                    <h2>Update APA DATA</h2>
+                    <h3>Select a year</h3>
+                    <input type="number" name="year" id="year">
+                    <input id="Button" type="button" value="Enter">
+                    <br>
+                    <div id="Response"></div>
+                </td>
+                <td style="padding-left: 100px;">
+                    <h2>Verify APA DATA</h2>
+                    <h3>Select a year</h3>
+                    <input type="number" name="year" id="year_verification">
+                    <input id="Button_verification" type="button" value="Enter">
+                    <br>
+                    <div id="Response_verification"></div>
+                </td>
+            </tr>
+            
+        </table>
+        
     </div>
 
     <div>
@@ -87,6 +105,16 @@
                     
                 });
             });
+
+            $("#Button_verification").click(function(e){
+                if ($(this).hasClass("stop"))
+                    return false;
+                $(this).addClass("stop");
+                console.log("click");
+                var year = $("#year_verification").val();
+                $("#Response_verification").html("");
+                APA_DATA_verification(year);
+            });
         });
 
         function APA_DATA(year){
@@ -110,5 +138,27 @@
                 
             });
         };
+
+        function APA_DATA_verification(year){
+            $.ajax({
+                type: "POST",
+                url:'{{path_update}}',
+                data: {
+                    year:year
+                },
+                async: true,
+                timeout: 600000, // sets timeout to 10 minutes
+                error:function (jqXHR){
+                    console.log("error");
+                    $("#Button_verification").removeClass("stop");
+                    $("#Response_verification").html("<h4>Error</h4>");
+                },
+                success: function(resp,status){
+                    $("#Response_verification").html("<h4>" + resp + "</h4>");
+                    $("#Button_verification").removeClass("stop");
+                }
+                
+            });
+        }
     </script>
 {% endblock %}
